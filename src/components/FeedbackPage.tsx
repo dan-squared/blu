@@ -1,0 +1,138 @@
+import { useState } from 'react';
+import NavBar from './NavBar';
+import { Send, Star } from 'lucide-react';
+
+interface FeedbackPageProps {
+  setPage: (page: string) => void;
+}
+
+export default function FeedbackPage({ setPage }: FeedbackPageProps) {
+  const [rating, setRating] = useState(0);
+  const [hoveredRating, setHoveredRating] = useState(0);
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Simulate form submission
+    setSubmitted(true);
+    setTimeout(() => {
+      setSubmitted(false);
+      setRating(0);
+      setPage('home');
+    }, 3000);
+  };
+
+  return (
+    <div className="flex flex-col lg:flex-row gap-4 lg:gap-12 h-full min-h-[calc(100vh-2rem)]">
+      {/* Left Hero - Fixed on Desktop */}
+      <div className="relative w-full lg:w-[40%] rounded-3xl overflow-hidden h-[40vh] lg:h-[calc(100vh-3rem)] lg:sticky lg:top-6">
+        <img 
+          src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=2070&auto=format&fit=crop" 
+          alt="Fresh Salad" 
+          referrerPolicy="no-referrer"
+          className="absolute inset-0 w-full h-full object-cover" 
+        />
+        <div className="absolute inset-0 bg-black/30"></div>
+        
+        <div className="absolute top-4 left-4 md:top-6 md:left-6 z-10">
+          <NavBar setPage={setPage} compact={true} />
+        </div>
+
+        <div className="absolute bottom-8 md:bottom-12 left-0 w-full text-center z-10 px-4">
+          <h1 className="font-forum text-4xl sm:text-5xl md:text-7xl lg:text-8xl text-white tracking-widest break-words">FEEDBACK</h1>
+        </div>
+      </div>
+
+      {/* Right Content */}
+      <div className="w-full lg:w-[60%] py-8 lg:py-16 lg:pr-8 xl:pr-16 flex items-center justify-center">
+        <div className="w-full max-w-xl bg-white p-6 sm:p-8 md:p-12 rounded-3xl shadow-sm border border-stone-100">
+          {submitted ? (
+            <div className="text-center py-12">
+              <div className="w-16 h-16 md:w-20 md:h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Send size={32} />
+              </div>
+              <h2 className="font-forum text-3xl md:text-4xl text-stone-900 mb-4 tracking-wide">Thank You!</h2>
+              <p className="text-stone-600 text-base md:text-lg">Your feedback helps us improve and serve you better at Blu Kitchen.</p>
+            </div>
+          ) : (
+            <>
+              <div className="text-center mb-8 md:mb-10">
+                <h2 className="font-forum text-2xl sm:text-3xl md:text-4xl text-stone-900 mb-3 md:mb-4 tracking-wide break-words">We'd love to hear from you</h2>
+                <p className="text-stone-600 text-sm md:text-base break-words">Please share your experience at Blu Kitchen, Laphto Mall.</p>
+              </div>
+
+              <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+                <div>
+                  <label className="block text-sm font-bold tracking-widest uppercase text-stone-500 mb-2">How was your experience?</label>
+                  <div className="flex gap-2">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => setRating(star)}
+                        onMouseEnter={() => setHoveredRating(star)}
+                        onMouseLeave={() => setHoveredRating(0)}
+                        className="focus:outline-none transition-transform hover:scale-110"
+                      >
+                        <Star 
+                          size={32} 
+                          className={`${
+                            star <= (hoveredRating || rating) 
+                              ? 'fill-yellow-400 text-yellow-400' 
+                              : 'text-stone-300'
+                          } transition-colors`} 
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-bold tracking-widest uppercase text-stone-500 mb-2">Name</label>
+                    <input 
+                      type="text" 
+                      id="name" 
+                      required
+                      className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-900 focus:ring-1 focus:ring-stone-900 outline-none transition-colors bg-stone-50/50"
+                      placeholder="Your name"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-bold tracking-widest uppercase text-stone-500 mb-2">Email</label>
+                    <input 
+                      type="email" 
+                      id="email" 
+                      className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-900 focus:ring-1 focus:ring-stone-900 outline-none transition-colors bg-stone-50/50"
+                      placeholder="Your email (optional)"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="message" className="block text-sm font-bold tracking-widest uppercase text-stone-500 mb-2">Comments</label>
+                  <textarea 
+                    id="message" 
+                    rows={5}
+                    required
+                    className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-900 focus:ring-1 focus:ring-stone-900 outline-none transition-colors bg-stone-50/50 resize-none"
+                    placeholder="Tell us about your food, service, and atmosphere..."
+                  ></textarea>
+                </div>
+
+                <button 
+                  type="submit"
+                  disabled={rating === 0}
+                  className="w-full bg-stone-900 text-white py-4 rounded-xl font-bold tracking-widest uppercase hover:bg-stone-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-4 flex items-center justify-center gap-2"
+                >
+                  <span>Submit Feedback</span>
+                  <Send size={18} />
+                </button>
+              </form>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
